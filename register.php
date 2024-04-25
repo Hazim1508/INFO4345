@@ -1,38 +1,47 @@
 <?php
-$servername = "localhost";
-$username = "Hazim";
-$password = "info4345";
-$dbname = "students";
+require 'db.php';
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Validate username
+    if (!preg_match("/^(?=.*[A-Za-z\d@$!%*#?&])[A-Za-z\d@$!%*#?&]{3,}$/", $username)) {
+        echo "Username must contain at least one letter, one number, or one special character, and be at least 3 characters long";
+        exit();
+    }
 
-$email = $_POST['email'];
-$password = $_POST['password'];
+    // Validate email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "Invalid email format";
+        exit();
+    }
 
-$emailRegex = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/";
-$passwordRegex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
+    // Validate password
+    if (!preg_match("/^(?=.*[A-Za-z\d@$!%*#?&]).{8,}$/", $password)) {
+        echo "Password must be at least 8 characters long and contain at least one letter, one number, or one special character";
+        exit();
+    }
 
-$password = password_hash($password, PASSWORD_DEFAULT);
-$stmt = $pdo->prepare("INSERT INTO admin (email, password) VALUES (?, ?)");
-$stmt->execute([$email, $password]);
+    $email = htmlspecialchars($email);
 
-if (preg_match($emailRegex, $email) && preg_match($passwordRegex, $password)) {
-    $stmt = $conn->prepare("INSERT INTO admin (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $email, $password);
-    $stmt->execute();
-    echo "Registration successful";
+    if(isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
+    
+        $query = "INSERT INTO users (email, password) VALUES (?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $email, $hashed_password);
+
+    if ($stmt->execute()) {
+        echo "New record created successfully. <a href='index.html'>Go to homepage</a>";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
     $stmt->close();
-} else {
-    header("Location: register.html");
-    echo "Invalid email or password";
-    exit();
+    $conn->close();
 }
-
-$conn->close();
+}
 ?>
