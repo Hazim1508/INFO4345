@@ -21,8 +21,8 @@ Once registered, the user can login, via `login.html`, the same details, to acce
 
 # *Class Assignment [#03]*
 
-Sidenote: 'index.html' is changed, as login page (previously, as Student Registartion Form, now in a file 'form_student.php'). 'student_details.php' is now changed into 'session_validation.php'
+Sidenote: `index.html` is changed, as login page (previously, as Student Registartion Form, now in a file `form_student.php`). `student_details.php` is now changed into `session_validation.php`
 
-The user starts at 'index.html' (login page). User can login the details if user has registered their email. Otherwise, the user can click a link to direct the user to 'register.html'. If user successfully register their details. The role given is "user" by default. Changing the role to admin can only be done in MySQL, which can only be accessed by the host (Hazim - 2014309)
+The user starts at `index.html` (login page). User can login the details if user has registered their email. Otherwise, the user can click a link to direct the user to `register.html`. If user successfully register their details. The role given is "user" by default. Changing the role to admin can only be done in MySQL, which can only be accessed by the host (Hazim - 2014309)
 
-Upon successfully login, the user is directed to 'form_student.php' Upon successfully registered student details, it will direct the user to 'list_student.php' to see the updated table of list of students from the database. The role function is applied in this page where "admin" can insert, update, or delete a data, "user" can update the data, and "guest" can only view.
+Upon successfully login, the user is directed to `form_student.php` Upon successfully registered student details, it will direct the user to `list_student.php` to see the updated table of list of students from the database. The role function is applied in this page where "admin" can insert, update, or delete a data, "user" can update the data, and "guest" can only view.
