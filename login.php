@@ -1,27 +1,37 @@
 <?php
 session_start();
-require 'db.php'; // Include your database connection script
+require 'db.php';
 
-$email = $_POST['email'];
-$password = $_POST['password'];
+// Check connection
+if(isset($_POST['email']) && isset($_POST['password'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-// Validate and sanitize inputs
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    die("Invalid email format");
+    $query = "SELECT * FROM users WHERE email=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        if($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['login_user'] = $user['email']; // store email in session
+                $_SESSION['role'] = $user['role']; // store role in session
+                header("location: form_student.php");
+            } else {
+                echo "Error: Invalid email or password";
+                header("Location: index.html");
+            }
+        } else {
+            echo "Error: Invalid email or password";
+            header("Location: index.html");
+        }
+    } else {
+        echo "Error: Please enter correct email and password";
+        header("Location: index.html");
+    }
 }
-$email = htmlspecialchars($email);
-$password = htmlspecialchars($password);
 
-// Query the database
-$stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-$stmt->execute([$email]);
-$user = $stmt->fetch();
-
-// Check if user exists and password is correct
-if ($user && password_verify($password, $user['password'])) {
-    $_SESSION['email'] = $email;
-    header("Location: student_details.php");
-} else {
-    die("Invalid login credentials");
-}
+$conn->close();
 ?>
