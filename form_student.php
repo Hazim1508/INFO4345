@@ -5,9 +5,21 @@ require 'role_check.php';
 session_start();
 
 if (!isset($_SESSION['login_user'])) {
-    header("location:login.php");
+    header("location:index.php");
     die();
 }
+
+// Sanitize input
+$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+$matricNo = filter_input(INPUT_POST, 'matricNo', FILTER_SANITIZE_STRING);
+$currentAddress = filter_input(INPUT_POST, 'currentAddress', FILTER_SANITIZE_STRING);
+$homeAddress = filter_input(INPUT_POST, 'homeAddress', FILTER_SANITIZE_STRING);
+
+// Encoding output
+echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+echo htmlspecialchars($matricNo, ENT_QUOTES, 'UTF-8');
+echo htmlspecialchars($currentAddress, ENT_QUOTES, 'UTF-8');
+echo htmlspecialchars($homeAddress, ENT_QUOTES, 'UTF-8');
 ?>
 
 <!DOCTYPE html>
