@@ -45,6 +45,14 @@ header("Content-Security-Policy: default-src 'self';");
 // Encoding output
 echo htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
 echo htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
+
+// Generate CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Set CSRF token cookie
+setcookie('csrf_token', $_SESSION['csrf_token']);
 ?>
 
 <!DOCTYPE html>
@@ -102,6 +110,8 @@ echo htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
             <input type="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required>
             <input type="password" name="password" placeholder="Password" pattern="^(?=.*[A-Za-z\d@$!%*#?&]).{8,}$" required>
             <button type="submit">Login</button>
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            <input type="submit" value="Submit">
         </form>
         <a href="register.php" class="register-link">Don't have an account? Register here</a>
     </div>
