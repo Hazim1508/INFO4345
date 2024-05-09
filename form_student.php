@@ -20,6 +20,14 @@ echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 echo htmlspecialchars($matricNo, ENT_QUOTES, 'UTF-8');
 echo htmlspecialchars($currentAddress, ENT_QUOTES, 'UTF-8');
 echo htmlspecialchars($homeAddress, ENT_QUOTES, 'UTF-8');
+
+// Generate CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Set CSRF token cookie
+setcookie('csrf_token', $_SESSION['csrf_token']);
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +58,7 @@ echo htmlspecialchars($homeAddress, ENT_QUOTES, 'UTF-8');
         <input type="email" id="email" name="email" required><br>
         <span class="error" id="emailError"></span><br>
 
-        <label for="mobilePhoneNo">Mobile Phone No:</label><br>
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
         <input type="tel" id="mobilePhoneNo" name="mobilePhoneNo" required><br>
         <span class="error" id="mobilePhoneNoError"></span><br>
 
